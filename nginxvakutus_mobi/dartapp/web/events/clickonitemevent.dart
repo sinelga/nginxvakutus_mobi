@@ -10,7 +10,7 @@ show(event,List<ForMark> forMarkList) {
 
   if (!start) {
     
-    close = new Element.html("<i class='fa fa-times-circle-o'></i>");
+    close = new Element.html("<i class='fa fa-times-circle-o fa-2x'></i>");
     close.onClick.listen((event) => closeevent.close(event));
     var closeelem = querySelector('#close');
     closeelem.append(close);

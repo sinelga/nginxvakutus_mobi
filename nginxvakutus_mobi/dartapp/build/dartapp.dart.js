@@ -3096,7 +3096,7 @@ gAn:function(){return this.J9
 h5:function(a,b){return this.M.call$1(b)},
 wE:function(a){return this.M.call$0()},
 $isns:true},"+StringMatch": [391],"":"vtu<-,Zv@-"}],["clickonitemevent.dart","file:///home/juno/git/nginxvakutus_mobi/nginxvakutus_mobi/dartapp/web/events/clickonitemevent.dart",,Z,{Tp:function(a,b){var z,y,x,w,v,u,t,s
-if($.YT!==!0){$.JK=W.U9("<i class='fa fa-times-circle-o'></i>",null,null)
+if($.YT!==!0){$.JK=W.U9("<i class='fa fa-times-circle-o fa-2x'></i>",null,null)
 J.Vg($.JK).yI(new Z.zG())
 document.querySelector("#close").appendChild($.JK)
 $.YT=!0}else document.querySelector("#close").hidden=!1
