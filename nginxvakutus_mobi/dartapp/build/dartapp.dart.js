@@ -3112,11 +3112,10 @@ if(v===!0)u=J.WB(J.Nj(u,0,500),"...")
 t="<div class='page-header'> "+x+"</div><div class='media'><img class='media-object img-thumbnail itemimage' src='"+H.d(w)+"' alt=''><div class='media-body'> <p class='media-heading googlefontcont'>"+H.d(u)+"</p></div></div> "
 s=document.createElement("div",null)
 J.TN(s,t,new Z.ie())
-if(z.hasChildNodes()===!0){P.JS("replace")
-v=J.uw(z)
+if(z.hasChildNodes()===!0){v=J.uw(z)
 v.V1(v)
-z.appendChild(s)}else{P.JS("append")
-z.appendChild(s)}"246,394,246,395,396"},"+show:2:0":1,zG:{"":"d9;",
+z.appendChild(s)}else z.appendChild(s)
+"246,394,246,395,396"},"+show:2:0":1,zG:{"":"d9;",
 call$1:function(a){document.querySelector("#rssfeeder").hidden=!1
 document.querySelector("#close").hidden=!0
 return

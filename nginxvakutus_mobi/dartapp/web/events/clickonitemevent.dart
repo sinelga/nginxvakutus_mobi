@@ -13,15 +13,12 @@ show(event,List<ForMark> forMarkList) {
     close = new Element.html("<i class='fa fa-times-circle-o'></i>");
     close.onClick.listen((event) => closeevent.close(event));
     var closeelem = querySelector('#close');
-//    closeelem.hidden = true;
     closeelem.append(close);
-//    closeelem.
-    
+
     start=true;
   } else {
     
     querySelector('#close').hidden = false;
-//    seleteditemplace.hidden = false;
     
   }
   
