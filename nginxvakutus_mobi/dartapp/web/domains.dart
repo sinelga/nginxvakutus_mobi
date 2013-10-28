@@ -12,31 +12,3 @@ class Navigation{
   
 }
 
-//class Resultsnavigation {
-//  
-//  final List<Navigationjs> listNavigationjs;
-//  
-//  Resultsnavigation(this.listNavigationjs);
-//  Resultsnavigation.fromProxy(var data) :
-//    listNavigationjs =data.results;
-//  
-//  
-//}
-//
-//
-//class Navigationjs {
-////  var data;
-//  final String Locale;
-//  final String Themes;
-//  final String SubThemes;
-//  
-//  
-//  Navigationjs(this.Locale,this.Themes,this.SubThemes);
-//  
-//  Navigationjs.fromProxy(var data) :
-//    Locale = data.Locale,
-//    Themes = data.Themes,
-//    SubThemes = data.SubThemes;
-//  
-//  
-//}

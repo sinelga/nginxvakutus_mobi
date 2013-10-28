@@ -7,7 +7,9 @@ body {
 .itemimage {
   width: 50%;
 }
-
+.itemimage30 {
+  width: 30%;
+}
 .googlefonttitle {
   font-family: 'Courgette', cursive;
   font-size: 100%;
