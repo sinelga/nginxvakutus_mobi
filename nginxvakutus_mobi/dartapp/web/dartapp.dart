@@ -32,7 +32,7 @@ void main() {
       forMark.Cont = proxy["results"][i]["Cont"];
       forMarkList.add(forMark);
     }
-    js.release(proxy);
+//    js.release(proxy);
 
     for (var i=0;i < forMarkList.length;i++){
       
