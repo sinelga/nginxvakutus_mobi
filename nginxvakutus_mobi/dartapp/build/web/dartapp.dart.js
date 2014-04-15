@@ -168,32 +168,30 @@ init.mangledNames = {call$0: "call:0:0", call$1: "call:1:0", call$1$type: "call:
 
     if (getterStubName) {
       f = tearOff(funcs, array, isStatic, name, isIntercepted);
+      f.getterStub = true;
       if (isStatic) init.globalFunctions[name] = f;
       originalDescriptor[getterStubName] = descriptor[getterStubName] = f;
       funcs.push(f);
       if (getterStubName) functions.push(getterStubName);
       f.$stubName = getterStubName;
       f.$callName = null;
+      if (isIntercepted) init.interceptedNames[getterStubName] = true;
     }
     if (isReflectable) {
       for (var i = 0; i < funcs.length; i++) {
         funcs[i].$reflectable = 1;
         funcs[i].$reflectionInfo = array;
       }
-    }
-    if (isReflectable) {
+      var mangledNames = isStatic ? init.mangledGlobalNames : init.mangledNames;
       var unmangledName = array[unmangledNameIndex];
-      var reflectionName = unmangledName + ":" + requiredParameterCount + ":" + optionalParameterCount;
-      if (isGetter) {
-        reflectionName = unmangledName;
-      } else if (isSetter) {
-        reflectionName = unmangledName + "=";
+      var reflectionName = unmangledName;
+      if (getterStubName) mangledNames[getterStubName] = reflectionName;
+      if (isSetter) {
+        reflectionName += "=";
+      } else if (!isGetter) {
+        reflectionName += ":" + requiredParameterCount + ":" + optionalParameterCount;
       }
-      if (isStatic) {
-        init.mangledGlobalNames[name] = reflectionName;
-      } else {
-        init.mangledNames[name] = reflectionName;
-      }
+      mangledNames[name] = reflectionName;
       funcs[0].$reflectionName = reflectionName;
       funcs[0].$metadataIndex = unmangledNameIndex + 1;
       if (optionalParameterCount) descriptor[unmangledName + "*"] = funcs[0];
@@ -244,6 +242,7 @@ init.mangledNames = {call$0: "call:0:0", call$1: "call:1:0", call$1$type: "call:
   if (!init.statics) init.statics = map();
   if (!init.typeInformation) init.typeInformation = map();
   if (!init.globalFunctions) init.globalFunctions = map();
+  if (!init.interceptedNames) init.interceptedNames = map();
   var libraries = init.libraries;
   var mangledNames = init.mangledNames;
   var mangledGlobalNames = init.mangledGlobalNames;
@@ -2487,6 +2486,7 @@ init.mangledNames = {call$0: "call:0:0", call$1: "call:1:0", call$1$type: "call:
     if (t1) {
       isIntercepted = jsArguments.length == 1 && true;
       trampoline = H.Closure_forwardCallTo(receiver, $function, isIntercepted);
+      trampoline.$reflectionInfo = reflectionInfo;
     } else {
       $prototype.$name = propertyName;
       trampoline = $function;
@@ -2509,7 +2509,7 @@ init.mangledNames = {call$0: "call:0:0", call$1: "call:1:0", call$1$type: "call:
         $prototype[stubCallName] = t2;
       }
     }
-    $prototype["call*"] = $function;
+    $prototype["call*"] = trampoline;
     return $constructor;
   }, "call$6", "Closure_fromTearOff$closure", 12, 0, null, 43, [], 60, [], 61, [], 62, [], 63, [], 64, []],
   Closure_cspForwardCall: [function(arity, isSuperCall, stubName, $function) {

@@ -8,16 +8,16 @@ library source_writer;
 
 class Line {
 
-  final tokens = <LineToken>[];
+  final List<LineToken> tokens = <LineToken>[];
   final bool useTabs;
   final int spacesPerIndent;
-  final int indent;
+  final int indentLevel;
   final LinePrinter printer;
 
-  Line({this.indent: 0, this.useTabs: false, this.spacesPerIndent: 2,
+  Line({this.indentLevel: 0, this.useTabs: false, this.spacesPerIndent: 2,
       this.printer: const SimpleLinePrinter()}) {
-    if (indent > 0) {
-      _indent(indent);
+    if (indentLevel > 0) {
+      indent(indentLevel);
     }
   }
 
@@ -26,19 +26,21 @@ class Line {
   }
 
   void addSpaces(int n, {breakWeight: DEFAULT_SPACE_WEIGHT}) {
-    if (n > 0) {
-      tokens.add(new SpaceToken(n, breakWeight: breakWeight));
-    }
+    tokens.add(new SpaceToken(n, breakWeight: breakWeight));
   }
 
   void addToken(LineToken token) {
     tokens.add(token);
   }
 
-  bool isWhitespace() => tokens.every((tok) => tok is SpaceToken);
+  bool isEmpty() => tokens.isEmpty;
 
-  void _indent(int n) {
-    tokens.add(useTabs ? new TabToken(n) : new SpaceToken(n * spacesPerIndent));
+  bool isWhitespace() => tokens.every(
+      (tok) => tok is SpaceToken || tok is TabToken);
+
+  void indent(int n) {
+    tokens.insert(0,
+        useTabs ? new TabToken(n) : new SpaceToken(n * spacesPerIndent));
   }
 
   String toString() => printer.printLine(this);
@@ -79,7 +81,7 @@ class SimpleLineBreaker extends LinePrinter {
     var chunks = breakLine(line);
     for (var i = 0; i < chunks.length; ++i) {
       if (i > 0) {
-        buf.write(indent(chunks[i], line.indent));
+        buf.write(indent(chunks[i], line.indentLevel));
       } else {
         buf.write(chunks[i]);
       }
@@ -232,7 +234,7 @@ class Chunk implements LineText {
     }
   }
 
-  bool fits(LineText text) => length + text.length < maxLength;
+  bool fits(LineText text) => length + text.length <= maxLength;
 
   int get length => start.value.length + buffer.length;
 
@@ -257,11 +259,15 @@ class LineToken implements LineText {
 
   String toString() => value;
 
-  int get length => value.length;
+  int get length => lengthLessNewlines(value);
 
   void addTo(Chunk chunk) {
     chunk.buffer.write(value);
   }
+
+  int lengthLessNewlines(String str) =>
+      str.endsWith('\n') ? str.length - 1 : str.length;
+
 }
 
 
@@ -293,19 +299,21 @@ class SourceWriter {
 
   final String lineSeparator;
   int indentCount = 0;
+  final int spacesPerIndent;
+  final bool useTabs;
 
   LinePrinter linePrinter;
   LineToken _lastToken;
 
   SourceWriter({this.indentCount: 0, this.lineSeparator: NEW_LINE,
-      bool useTabs: false, int spacesPerIndent: 2, int maxLineLength: 80}) {
+      this.useTabs: false, this.spacesPerIndent: 2, int maxLineLength: 80}) {
     if (maxLineLength > 0) {
       linePrinter = new SimpleLineBreaker(maxLineLength, (n) =>
           getIndentString(n, useTabs: useTabs, spacesPerIndent: spacesPerIndent));
     } else {
       linePrinter = new SimpleLinePrinter();
     }
-    currentLine = new Line(indent: indentCount, printer: linePrinter);
+    currentLine = newLine();
   }
 
   LineToken get lastToken => _lastToken;
@@ -317,6 +325,10 @@ class SourceWriter {
 
   void indent() {
     ++indentCount;
+    // Rather than fiddle with deletions/insertions just start fresh
+    if (currentLine.isWhitespace()) {
+      currentLine = newLine();
+    }
   }
 
   void newline() {
@@ -325,7 +337,7 @@ class SourceWriter {
     }
     _addToken(new NewlineToken(this.lineSeparator));
     buffer.write(currentLine.toString());
-    currentLine = new Line(indent: indentCount, printer: linePrinter);
+    currentLine = newLine();
   }
 
   void newlines(int num) {
@@ -334,12 +346,12 @@ class SourceWriter {
     }
   }
 
-  void print(x) {
+  void write(x) {
     _addToken(new LineToken(x));
   }
 
-  void println(String s) {
-    print(s);
+  void writeln(String s) {
+    write(s);
     newline();
   }
 
@@ -353,7 +365,14 @@ class SourceWriter {
 
   void unindent() {
     --indentCount;
+    // Rather than fiddle with deletions/insertions just start fresh
+    if (currentLine.isWhitespace()) {
+      currentLine = newLine();
+    }
   }
+
+  Line newLine() => new Line(indentLevel: indentCount, useTabs: useTabs,
+      spacesPerIndent: spacesPerIndent, printer: linePrinter);
 
   String toString() {
     var source = new StringBuffer(buffer.toString());
